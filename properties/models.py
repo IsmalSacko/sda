@@ -26,6 +26,7 @@ class Property(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Prix en EUR
     zone = models.ForeignKey(Zone, related_name='properties', on_delete=models.CASCADE)
     available = models.BooleanField(default=True)
+    Image = models.ImageField(upload_to='properties', blank=True, null=True)
 
     def __str__(self):
         return self.title

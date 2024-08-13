@@ -22,16 +22,9 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('properties.urls')),
-    path('accounts/', include('accounts.urls')),
+    path('', include('dj_rest_auth.urls')),
     path('registration/', include('dj_rest_auth.registration.urls')),
     path('api-auth/', include('rest_framework.urls')),    
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),  # Nouveau endpoint pour obtenir un token
     path('accounts/', include('allauth.urls')),
-
-    #home url
-    path('', include('sdaSite.urls')),
 ]
-from django.conf import settings
-from django.conf.urls.static import static
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
