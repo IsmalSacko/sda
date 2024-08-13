@@ -24,7 +24,6 @@ urlpatterns = [
     path('api/', include('properties.urls')),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path('registration/', include('dj_rest_auth.registration.urls')),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/', include('properties.urls')),
+    path('api-auth/', include('rest_framework.urls')),    
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),  # Nouveau endpoint pour obtenir un token
 ]
