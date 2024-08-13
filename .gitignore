@@ -1,0 +1,24 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+
+# Environnements virtuels
+venv/
+.env/
+
+# IDEs
+./idea/    # PyCharm/IntelliJ IDEA
+.vscode/  # VS Code
+
+# Windows spécifiques
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+log/
+logs/
