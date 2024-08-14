@@ -23,11 +23,12 @@ class ZoneSerializer(serializers.ModelSerializer):
 
 class PropertySerializer(serializers.ModelSerializer):
     zone = serializers.PrimaryKeyRelatedField(queryset=Zone.objects.all())
+    zone_name = serializers.CharField(source='zone.name')
     price_in_fcfa = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
-        fields = ['id', 'title', 'description', 'price', 'price_in_fcfa', 'zone', 'available']
+        fields = ['id', 'title', 'description', 'price', 'price_in_fcfa', 'zone','zone_name', 'available', 'image']
 
     def get_price_in_fcfa(self, obj):
         return obj.price_in_fcfa()

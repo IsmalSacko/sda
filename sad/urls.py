@@ -18,15 +18,16 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken import views as drf_views
 from rest_framework.authtoken.views import obtain_auth_token
+app_name = 'sad'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('properties.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('registration/', include('dj_rest_auth.registration.urls')),
-    path('api-auth/', include('rest_framework.urls')),    
+    path('admin/', admin.site.urls, name='admin'),
+    path('api/', include('properties.urls'), name='api'),
+    path('accounts/', include('accounts.urls'), name='accounts'),
+    path('registration/', include('dj_rest_auth.registration.urls'),    name='registration'),
+    path('api-auth/', include('rest_framework.urls'), name='rest_framework',),  # Endpoint pour l'interface d'administration de DRF
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),  # Nouveau endpoint pour obtenir un token
-    path('accounts/', include('allauth.urls')),
+    
 
     #home url
     path('', include('sdaSite.urls')),

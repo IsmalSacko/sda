@@ -11,7 +11,7 @@ venv/
 .env/
 
 # IDEs
-./idea/    # PyCharm/IntelliJ IDEA
+.idea/    # PyCharm/IntelliJ IDEA
 .vscode/  # VS Code
 
 # Windows spécifiques

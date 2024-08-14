@@ -1,9 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Token d'authentification fourni
-    const authToken = '1f2d48fb81a04d86f5d34a7508278b981e54b2d8';
+    const authToken = localStorage.getItem('authToken');
     const csrfToken = getCookie('csrftoken');
 
-    // Fonction pour obtenir le cookie CSRF
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -19,38 +17,110 @@ document.addEventListener('DOMContentLoaded', function() {
         return cookieValue;
     }
 
-    // Fonction de connexion
-    function handleLogin(event) {
-        event.preventDefault();
-        
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        axios.post('http://127.0.0.1:8000/accounts/login/', {
-            username: username,
-            password: password
-        }, {
+    window.openEditForm = function(event) {
+        event.preventDefault(); // Empêche le comportement par défaut du lien
+
+        const propertyId = event.target.getAttribute('data-id');
+
+        axios.get(`http://127.0.0.1:8000/api/properties/${propertyId}/`, {
             headers: {
+                'Authorization': `Bearer ${authToken}`,
                 'X-CSRFToken': csrfToken
             }
         })
         .then(response => {
-            const token = response.data.token; // Assurez-vous que la réponse contient le token
-            localStorage.setItem('authToken', token); // Stocker le token dans le stockage local
-            alert('Connexion réussie');
-            window.location.reload(); // Recharger la page après connexion
+            const property = response.data;
+
+            // Récupérer la liste des zones
+            axios.get('http://127.0.0.1:8000/api/zones/', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(zoneResponse => {
+                const zones = zoneResponse.data;
+
+                // Créer un formulaire d'édition
+                const editFormHTML = `
+                    <div class="container mt-4">
+                        <h2>Modifier la Propriété</h2>
+                        <form id="edit-property-form">
+                            <input type="hidden" id="property-id" value="${propertyId}">
+                            <div class="form-group">
+                                <label for="title">Titre</label>
+                                <input type="text" class="form-control" id="title" value="${property.title}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" required>${property.description}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Prix (FCFA)</label>
+                                <input type="number" class="form-control" id="price" value="${property.price_in_fcfa}" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zone">Zone</label>
+                                <select class="form-control" id="zone" required>
+                                    ${zones.map(zone => `
+                                        <option value="${zone.id}" ${zone.id === property.zone ? 'selected' : ''}>${zone.name}</option>
+                                    `).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="image">URL de l'image</label>
+                                <input type="text" class="form-control" id="image" value="${property.image}">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                            <a href="#" class="btn btn-secondary" onclick="loadProperties()">Annuler</a>
+                        </form>
+                    </div>
+                `;
+
+                // Remplacer le contenu du body avec le formulaire d'édition
+                document.body.innerHTML = editFormHTML;
+
+                // Ajouter un gestionnaire d'événements pour le formulaire d'édition
+                document.getElementById('edit-property-form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    axios.put(`http://127.0.0.1:8000/api/properties/${propertyId}/`, {
+                        title: document.getElementById('title').value,
+                        description: document.getElementById('description').value,
+                        price_in_fcfa: document.getElementById('price').value,
+                        zone: document.getElementById('zone').value,
+                        image: document.getElementById('image').value
+                    }, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`,
+                            'X-CSRFToken': csrfToken
+                        }
+                    })
+                    .then(response => {
+                        alert('Propriété mise à jour avec succès');
+                        loadProperties(); // Recharger les propriétés après mise à jour
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la mise à jour de la propriété:', error);
+                        alert('Erreur lors de la mise à jour de la propriété');
+                    });
+                });
+            })
+            .catch(zoneError => {
+                console.error('Erreur lors de la récupération des zones:', zoneError);
+                alert('Erreur lors de la récupération des zones');
+            });
         })
         .catch(error => {
-            console.error('Erreur de connexion:', error);
-            alert('Erreur de connexion');
+            console.error('Erreur lors de la récupération des détails de la propriété:', error);
+            alert('Erreur lors de la récupération des détails de la propriété');
         });
     }
-    
-    // Fonction de récupération des propriétés
-    function loadProperties() {
+
+    window.loadProperties = function() {
         axios.get('http://127.0.0.1:8000/api/properties/', {
             headers: {
-                'Authorization': `Bearer ${authToken}`, // Utilisation du token fixe
+                'Authorization': `Bearer ${authToken}`,
                 'X-CSRFToken': csrfToken
             }
         })
@@ -69,12 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 const propertyCard = `
                     <div class="col-md-4">
                         <div class="card property-card">
-                            <img src="${property.imageUrl || 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/aa/42/e4/azalai-hotel-salam.jpg?w=1400&h=-1&s=1'}" class="card-img-top" alt="${property.title}">
+                            <img src="${property.image || 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/16/aa/42/e4/azalai-hotel-salam.jpg?w=1400&h=-1&s=1'}" class="card-img-top" alt="${property.title}">
                             <div class="card-body">
                                 <h5 class="card-title">${property.title}</h5>
                                 <p class="card-text">${property.description}</p>
+                                <p class="card-text"><strong>Zone:</strong> ${property.zone}</p>
                                 <p class="card-text"><strong>Prix:</strong> ${property.price_in_fcfa} FCFA</p>
-                                <a href="#" class="btn btn-primary" data-id="${property.id}" onclick="editProperty(event)">Modifier</a>
+                                <a href="#" class="btn btn-primary" data-id="${property.id}" onclick="openEditForm(event)">Modifier</a>
                             </div>
                         </div>
                     </div>
@@ -87,43 +158,38 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erreur lors de la récupération des propriétés');
         });
     }
-    
-    // Fonction de modification de propriété
-    function editProperty(event) {
+
+    function handleLogin(event) {
         event.preventDefault();
-        
-        const propertyId = event.target.getAttribute('data-id');
-        const title = prompt('Nouveau titre:');
-        const description = prompt('Nouvelle description:');
-        const price = prompt('Nouveau prix:');
-        
-        axios.put(`http://127.0.0.1:8000/api/properties/${propertyId}/`, {
-            title: title,
-            description: description,
-            price: price
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        axios.post('http://127.0.0.1:8000/accounts/login/', {
+            username: username,
+            password: password
         }, {
             headers: {
-                'Authorization': `Bearer ${authToken}`, // Utilisation du token fixe
                 'X-CSRFToken': csrfToken
             }
         })
         .then(response => {
-            alert('Propriété mise à jour avec succès');
-            loadProperties(); // Recharger les propriétés après mise à jour
+            const token = response.data.token;
+            localStorage.setItem('authToken', token);
+            alert('Connexion réussie');
+            window.location.reload();
         })
         .catch(error => {
-            console.error('Erreur lors de la mise à jour de la propriété:', error);
-            alert('Erreur lors de la mise à jour de la propriété');
+            console.error('Erreur de connexion:', error);
+            alert('Erreur de connexion');
         });
     }
-    
-    // Gestion de la soumission du formulaire de connexion
+
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // Charger les propriétés au chargement de la page si déjà connecté
     if (localStorage.getItem('authToken')) {
         loadProperties();
     }
