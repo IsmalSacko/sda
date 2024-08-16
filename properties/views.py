@@ -36,7 +36,7 @@ class ZoneDetailView(generics.RetrieveUpdateDestroyAPIView):
 class PropertyListCreateView(generics.ListCreateAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertySerializer
-    permission_classes = [IsAuthenticated]  # Exige une authentification
+    permission_classes = [AllowAny]  # Exige une authentification
     
 # Uppade and delete
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -58,19 +58,21 @@ class ReservationDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]  # Exige une authentification
 
 
+from rest_framework.response import Response
+
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
         user = request.user
-        print(f'User: {user}')
+        role = 'superuser' if user.is_superuser else 'staff' if user.is_staff else 'user'
+        group = user.groups.first()
         return Response({
             "username": user.username,
             "email": user.email,
-            # Include other user details as needed
-            
+            "role": role,
+            "group": group.name if group else None,
             'token': str(user.auth_token),
-            
-        })
+      })
 
 

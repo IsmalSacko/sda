@@ -1,0 +1,226 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier la Réservation</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 300px;
+            z-index: 9999;
+        }
+
+        .notification {
+            background-color: #00b09b;
+            background-image: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: slideDown 0.5s forwards;
+        }
+
+        @keyframes slideDown {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Modifier la Réservation</h1>
+        <form id="reservation-form">
+            <div class="form-group">
+                <label for="property">Propriété</label>
+                <select id="property" name="property" required>
+                    <!-- Les options seront ajoutées ici par JavaScript -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="checkin">Check-in</label>
+                <input type="date" id="checkin" name="checkin" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout">Check-out</label>
+                <input type="date" id="checkout" name="checkout" required>
+            </div>
+            <button type="submit" class="submit-btn">Enregistrer</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <!-- Conteneur pour les notifications -->
+    <div id="notification-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const reservationId = "{{ id }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReservation(reservationId);
+            loadProperties();
+        });
+
+        function loadReservation(id) {
+            axios.get(`http://127.0.0.1:8000/api/reservations/${id}/`)
+                .then(function(response) {
+                    const reservation = response.data;
+                    document.getElementById('property').value = reservation.property;
+                    document.getElementById('checkin').value = reservation.check_in;
+                    document.getElementById('checkout').value = reservation.check_out;
+                })
+                .catch(function(error) {
+                    console.error('Erreur lors du chargement de la réservation:', error);
+                });
+        }
+
+        function loadProperties() {
+            axios.get('http://127.0.0.1:8000/api/properties/')
+                .then(function(response) {
+                    const properties = response.data;
+                    const propertySelect = document.getElementById('property');
+
+                    propertySelect.innerHTML = properties.map(property => `
+                        <option value="${property.id}">
+                            ${property.title} (${property.price_in_fcfa} FCFA)
+                        </option>
+                    `).join('');
+                })
+                .catch(function(error) {
+                    console.error('Erreur lors du chargement des propriétés:', error);
+                });
+        }
+
+        document.getElementById('reservation-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const property = document.getElementById('property').value;
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+
+            axios.patch(`http://127.0.0.1:8000/api/reservations/${reservationId}/`, 
+            {
+                property: property,
+                check_in: checkin,
+                check_out: checkout,
+            }, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(function (response) {
+                document.getElementById('message').textContent = 'Réservation mise à jour !';
+                document.getElementById('message').style.color = 'green';
+                showNotification('Réservation mise à jour !');
+
+                setTimeout(() => {
+                    window.location.href = `http://127.0.0.1:8000/reserved/${reservationId}/`;
+                }, 2000);
+            })
+            .catch(function (error) {
+                document.getElementById('message').textContent = 'Erreur lors de la mise à jour de la réservation.';
+                document.getElementById('message').style.color = 'red';
+            });
+        });
+
+        function showNotification(message) {
+            const notificationContainer = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            notificationContainer.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Profil - Agence Immobilière Bamako</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+         body {
+            margin: 0;
+            padding: 0;          
+            height: 100vh;
+           
+            background: linear-gradient(45deg, #a8c0ff, #d6e4ff, #f7f9fc, #6A7BFF);
+
+
+            background-size: 600% 600%;
+            animation: gradientAnimation 8s ease infinite;
+            color: black;
+            font-family: Arial, sans-serif;
+            
+            
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        p {
+            font-size: 1.2em;
+        }
+        .hidden {
+            display: none;
+        }
+
+        .profile-container {
+            margin-top: 20px;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
+
+        .profile-info {
+            margin-bottom: 30px;
+        }
+
+        .reservation-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .reservation-item img {
+            max-height: 150px;
+            margin-bottom: 10px;
+        }
+
+        .reservation-item h6 {
+            margin-top: 10px;
+        }
+
+        .reservation-card {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Main Content -->
+    <div class="container profile-container">
+        <h2>Profil Utilisateur</h2>
+        <div class="row">
+            <!-- Informations du profil -->
+            <div class="col-md-6 profile-info">
+                <form id="profile-form">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" disabled>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="first_name">Prénom</label>
+                            <input type="text" class="form-control" id="first_name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="last_name">Nom de famille</label>
+                            <input type="text" class="form-control" id="last_name">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="update-profile-btn">Mettre à jour le profil</button>
+                </form>
+
+                <h3 class="mt-4">Modifier le Mot de Passe</h3>
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="current_password">Mot de passe actuel</label>
+                        <input type="password" class="form-control" id="current_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new_password">Nouveau mot de passe</label>
+                        <input type="password" class="form-control" id="new_password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_new_password">Confirmer le nouveau mot de passe</label>
+                        <input type="password" class="form-control" id="confirm_new_password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="change-password-btn">Changer le mot de passe</button>
+                </form>
+
+                <h3 class="mt-4">Mot de Passe Oublié</h3>
+                <form id="forgot-password-form">
+                    <div class="form-group">
+                        <label for="forgot_email">Email</label>
+                        <input type="email" class="form-control" id="forgot_email" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="forgot-password-btn">Envoyer le lien de réinitialisation</button>
+                </form>
+            </div>
+
+            <!-- Réservations -->
+            <div class="col-md-5 offset-md-1 text-center">
+                <div class="reservation-card">
+                    <h5 class="card-title text-center">Réservations</h5>
+                    <div id="reservations-container">
+                        <!-- Les détails des réservations seront insérés ici -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiUrl = 'http://127.0.0.1:8000/accounts/user/';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // Charger les informations du profil
+            axios.get(apiUrl, { headers: { 'X-CSRFToken': csrfToken } })
+                .then(response => {
+                    const data = response.data;
+                    document.getElementById('username').value = data.username;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('first_name').value = data.first_name || '';
+                    document.getElementById('last_name').value = data.last_name || '';
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement du profil:', error);
+                    Toastify({
+                        text: "Erreur lors du chargement du profil.",
+                        backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                    }).showToast();
+                });
+
+            // Mettre à jour le profil
+            document.getElementById('update-profile-btn').addEventListener('click', () => {
+                axios.patch(apiUrl, {
+                    email: document.getElementById('email').value,
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value
+                }, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        Toastify({
+                            text: "Profil mis à jour avec succès.",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la mise à jour du profil:', error);
+                        Toastify({
+                            text: "Erreur lors de la mise à jour du profil.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    });
+            });
+
+            // Changer le mot de passe
+            document.getElementById('change-password-btn').addEventListener('click', () => {
+                const newPassword = document.getElementById('new_password').value;
+                const confirmNewPassword = document.getElementById('confirm_new_password').value;
+
+                if (newPassword !== confirmNewPassword) {
+                    Toastify({
+                        text: "Les nouveaux mots de passe ne correspondent pas.",
+                        backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                    }).showToast();
+                    return;
+                }
+
+                axios.post('http://127.0.0.1:8000/accounts/password/change/', {
+                    new_password1: newPassword,
+                    new_password2: confirmNewPassword
+                }, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        Toastify({
+                            text: "Mot de passe changé avec succès.",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du changement du mot de passe:', error);
+                        Toastify({
+                            text: "Erreur lors du changement du mot de passe.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    });
+            });
+
+            // Mot de passe oublié
+            document.getElementById('forgot-password-btn').addEventListener('click', () => {
+                axios.post('http://127.0.0.1:8000/accounts/password/reset/', {
+                    email: document.getElementById('forgot_email').value
+                }, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        Toastify({
+                            text: "Lien de réinitialisation envoyé.",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de l\'envoi du lien de réinitialisation:', error);
+                        Toastify({
+                            text: "Erreur lors de l'envoi du lien de réinitialisation.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    });
+            });
+
+           
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+    const apiUrl = 'http://127.0.0.1:8000/api/reservations/';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // Charger les réservations de l'utilisateur
+    axios.get(apiUrl, { headers: { 'X-CSRFToken': csrfToken } })
+        .then(response => {
+            const reservations = response.data;
+            const reservationsContainer = document.getElementById('reservations-container');
+            
+            // Si l'utilisateur n'a pas de réservations
+            if (reservations.length === 0) {
+                reservationsContainer.innerHTML = '<p>Aucune réservation trouvée.</p>';
+                return;
+            }
+
+            // Créer et insérer les éléments de réservation
+            reservations.forEach(reservation => {
+                const reservationElement = document.createElement('div');
+                reservationElement.classList.add('reservation-item');
+                reservationElement.innerHTML = `
+                    <img src="${reservation.image}" class="img-fluid text-center" alt="Image de la propriété" style="text-align: center;">
+                    <h6>Propriété : ${reservation.property_title}</h6>
+                    <p>Ville : ${reservation.property_city}</p>
+                    <p>Zone : ${reservation.property_zone}</p>
+                    <p>Date de réservation : ${new Date(reservation.date_reserved).toLocaleDateString('fr-FR')}</p>
+                    <p>Prix : ${reservation.property_price} FCFA</p>
+                    <button class="btn btn-primary modify-reservation-btn" data-id="${reservation.id}"><i class="fa fa-pencil-square" aria-hidden="true"></i> Modifier</button>
+                    <button class="btn btn-danger cancel-reservation-btn" data-id="${reservation.id}"><i class="fa fa-ban" aria-hidden="true"></i> Annuler</button>
+                `;
+                reservationsContainer.appendChild(reservationElement);
+            });
+
+            // Attacher un événement 'click' à chaque bouton d'annulation
+            document.querySelectorAll('.cancel-reservation-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const reservationId = event.target.getAttribute('data-id');
+                    if (reservationId) {
+                        axios.delete(`${apiUrl}${reservationId}/`, { headers: { 'X-CSRFToken': csrfToken } })
+                            .then(response => {
+                                Toastify({
+                                    text: "Réservation annulée avec succès.",
+                                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                                }).showToast();
+                                window.location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Erreur lors de l\'annulation de la réservation:', error);
+                                Toastify({
+                                    text: "Erreur lors de l'annulation de la réservation.",
+                                    backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                                }).showToast();
+                            });
+                    } else {
+                        console.error('L\'ID de réservation est vide.');
+                        Toastify({
+                            text: "Erreur : ID de réservation non défini.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    }
+                });
+            });
+
+            // Attacher un événement 'click' à chaque bouton de modification
+            document.querySelectorAll('.modify-reservation-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const reservationId = event.target.getAttribute('data-id');
+                    if (reservationId) {
+                        window.location.href = `/reserved/${reservationId}/`;
+                    } else {
+                        console.error('L\'ID de réservation est vide.');
+                        Toastify({
+                            text: "Erreur : ID de réservation non défini.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des réservations:', error);
+            Toastify({
+                text: "Erreur lors du chargement des réservations.",
+                backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+            }).showToast();
+        });
+});
+
+    </script>
+</body>
+</html>

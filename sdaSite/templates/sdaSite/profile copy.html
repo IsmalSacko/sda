@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Profil - Agence Immobilière Bamako</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+        .profile-container {
+            margin-top: 20px;
+        }
+        .form-control {
+            margin-bottom: 10px;
+        }
+        .btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container profile-container">
+        <h2>Profil Utilisateur</h2>
+        <form id="profile-form">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" class="form-control" id="username" disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="first_name">Prénom</label>
+                <input type="text" class="form-control" id="first_name">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Nom de famille</label>
+                <input type="text" class="form-control" id="last_name">
+            </div>
+            <button type="button" class="btn btn-primary" id="update-profile-btn">Mettre à jour le profil</button>
+        </form>
+
+        <h3 class="mt-4">Modifier le Mot de Passe</h3>
+        <form id="change-password-form">
+            <div class="form-group">
+                <label for="current_password">Mot de passe actuel</label>
+                <input type="password" class="form-control" id="current_password" required>
+            </div>
+            <div class="form-group">
+                <label for="new_password">Nouveau mot de passe</label>
+                <input type="password" class="form-control" id="new_password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_new_password">Confirmer le nouveau mot de passe</label>
+                <input type="password" class="form-control" id="confirm_new_password" required>
+            </div>
+            <button type="button" class="btn btn-primary" id="change-password-btn">Changer le mot de passe</button>
+        </form>
+
+        <h3 class="mt-4">Mot de Passe Oublié</h3>
+        <form id="forgot-password-form">
+            <div class="form-group">
+                <label for="forgot_email">Email</label>
+                <input type="email" class="form-control" id="forgot_email" required>
+            </div>
+            <button type="button" class="btn btn-primary" id="forgot-password-btn">Envoyer le lien de réinitialisation</button>
+        </form>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const apiUrl = 'http://127.0.0.1:8000/accounts/user/';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            // Charger les informations du profil
+            axios.get(apiUrl, { headers: { 'X-CSRFToken': csrfToken } })
+                .then(response => {
+                    const data = response.data;
+                    document.getElementById('username').value = data.username;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('first_name').value = data.first_name || '';
+                    document.getElementById('last_name').value = data.last_name || '';
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement du profil:', error);
+                    Toastify({
+                        text: "Erreur lors du chargement du profil.",
+                        backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                    }).showToast();
+                });
+
+            // Mettre à jour le profil
+            document.getElementById('update-profile-btn').addEventListener('click', () => {
+                axios.patch(apiUrl, {
+                    email: document.getElementById('email').value,
+                    first_name: document.getElementById('first_name').value,
+                    last_name: document.getElementById('last_name').value
+                }, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        Toastify({
+                            text: "Profil mis à jour avec succès.",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la mise à jour du profil:', error);
+                        Toastify({
+                            text: "Erreur lors de la mise à jour du profil.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    });
+            });
+
+            /// Changer le mot de passe
+document.getElementById('change-password-btn').addEventListener('click', () => {
+    const newPassword = document.getElementById('new_password').value;
+    const confirmNewPassword = document.getElementById('confirm_new_password').value;
+
+    if (newPassword !== confirmNewPassword) {
+        Toastify({
+            text: "Les nouveaux mots de passe ne correspondent pas.",
+            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+        }).showToast();
+        return;
+    }
+
+    axios.post('http://127.0.0.1:8000/accounts/password/change/', {
+        new_password1: newPassword,
+        new_password2: confirmNewPassword
+    }, { headers: { 'X-CSRFToken': csrfToken } })
+        .then(response => {
+            Toastify({
+                text: "Mot de passe changé avec succès.",
+                backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+            }).showToast();
+        })
+        .catch(error => {
+            console.error('Erreur lors du changement du mot de passe:', error);
+            Toastify({
+                text: "Erreur lors du changement du mot de passe.",
+                backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+            }).showToast();
+        });
+});
+
+
+            // Mot de passe oublié
+            document.getElementById('forgot-password-btn').addEventListener('click', () => {
+                axios.post('http://127.0.0.1:8000/accounts/password/reset/', {
+                    email: document.getElementById('forgot_email').value
+                }, { headers: { 'X-CSRFToken': csrfToken } })
+                    .then(response => {
+                        Toastify({
+                            text: "Lien de réinitialisation envoyé.",
+                            backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                        }).showToast();
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de l\'envoi du lien de réinitialisation:', error);
+                        Toastify({
+                            text: "Erreur lors de l'envoi du lien de réinitialisation.",
+                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                        }).showToast();
+                    });
+            });
+        });
+    </script>
+</body>
+</html>

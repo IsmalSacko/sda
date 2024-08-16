@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <title>Inscription - Agence Immobilière Bamako</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <style>
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Signup Form -->
+    <div class="container">
+        <h2 class="text-center">Inscription</h2>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password1">Mot de passe</label>
+                <input type="password" class="form-control" id="password1" required>
+            </div>
+            <div class="form-group">
+                <label for="password2">Confirmer le mot de passe</label>
+                <input type="password" class="form-control" id="password2" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
+        </form>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Récupérer le token CSRF
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche le comportement par défaut du formulaire
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password1 = document.getElementById('password1').value;
+            const password2 = document.getElementById('password2').value;
+
+            // Validation des mots de passe
+            if (password1 !== password2) {
+                Toastify({
+                    text: "Les mots de passe ne correspondent pas.",
+                    backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                }).showToast();
+                return;
+            }
+            const registerUrl = "{% url 'inscription' %}";
+            // Envoyer les données au serveur
+            axios.post('http://127.0.0.1:8000/registration/', {
+                username: username,
+                email: email,
+                password1: password1,
+                password2: password2
+            }, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                Toastify({
+                    text: "Inscription réussie !",
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                }).showToast();
+                // Optionnel : rediriger l'utilisateur vers la page après l'annmation de la notification (2s)
+                setTimeout(() => {
+                    window.location.href = 'http://127.0.0.1:8000/profile/';
+                }, 2000);
+            })
+            .catch(error => {
+                Toastify({
+                    text: "Erreur lors de l'inscription. Veuillez réessayer.",
+                    backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                }).showToast();
+            });
+        });
+    });
+</script>
+
+    </script>
+</body>
+</html>

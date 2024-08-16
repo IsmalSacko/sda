@@ -1,13 +1,15 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agence Immobilière Bamako</title>
+    <title>SDA</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         .carousel-item img {
             height: 400px;
@@ -22,12 +24,16 @@
             object-fit: cover;
             width: 100%;
         }
+        .hidden {
+    display: none;
+}
+
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Agence Immobilière Bamako</a>
+        <a class="navbar-brand" href="#">SDA</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -42,6 +48,28 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Nos Propriétés</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Services</a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profil</a>
+                </li>
+                <li class="nav-item">
+                    <form action="{% url 'logout' %}" method="post" class="nav-form">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link">Déconnexion</button>
+                    </form>
+                {% else %}                
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="show-login-form">Connexion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'inscription' %}">Inscription</a>
+                </li>
+                {% endif %}               
+                
+                
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                 </li>
@@ -86,7 +114,7 @@
     </div>
 
     <!-- Login Form -->
-    <div class="container mt-4">
+    <div class="container mt-4 hidden" id="login-container">
         <h2>Connexion</h2>
         <form id="login-form">
             <div class="form-group">
@@ -109,10 +137,61 @@
     </footer>
 
     <!-- jQuery and Bootstrap JS -->
+     <!-- Toastify JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="{% static '/js/app.js' %}"></script>
+
+    <!-- Ajoutez ce script dans le `<head>` ou juste avant la fermeture du `<body>` -->
+<script>  
+
+    function showLoginForm(event) {
+        event.preventDefault(); // Empêche le comportement par défaut du lien
+        const loginContainer = document.getElementById('login-container');
+        if (loginContainer) {
+            loginContainer.classList.remove('hidden');
+        }
+    }
+
+    // Gestionnaire d'événements pour le lien de connexion
+    const showLoginFormLink = document.getElementById('show-login-form');
+    if (showLoginFormLink) {
+        showLoginFormLink.addEventListener('click', showLoginForm);
+    }
+
+
+
+    // Ajouter un gestionnaire d'événements pour le formulaire de connexion
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    if (localStorage.getItem('authToken')) {
+        loadProperties();
+    }
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+    axios.post('/logout/', {}, {
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'  // Assure-toi que ce token est inclus
+        }
+    })
+    .then(response => {
+        window.location.href = '/';  // Redirection après déconnexion
+    })
+    .catch(error => {
+        console.error('Erreur lors de la déconnexion:', error);
+    });
+});
+
+
+</script>
+    
 </body>
 </html>

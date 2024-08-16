@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation d'Appartement</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+    <meta name="csrf-token" content="{{ csrf_token }}"> <!-- Inclure le token CSRF -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>Réservez votre Appartement</h1>
+        <form id="reservation-form">
+            <div class="form-group">
+                <label for="property">Propriété</label>
+                <select id="property" name="property" required>
+                    <!-- Les options seront ajoutées ici par JavaScript -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="checkin">Check-in</label>
+                <input type="date" id="checkin" name="checkin" required>
+            </div>
+            <div class="form-group">
+                <label for="checkout">Check-out</label>
+                <input type="date" id="checkout" name="checkout" required>
+            </div>
+            <button type="submit" class="submit-btn">Réserver</button>
+        </form>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // Récupérer le token CSRF
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Charger les propriétés disponibles dès le chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProperties();
+        });
+
+        function loadProperties() {
+            axios.get('http://127.0.0.1:8000/api/properties/', {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(function (response) {
+                const properties = response.data;
+                const propertySelect = document.getElementById('property');
+
+                // Insérer les options dans la sélection
+                propertySelect.innerHTML = properties.map(property => `
+                    <option value="${property.id}">
+                        ${property.title} (${property.price_in_fcfa} FCFA)
+                    </option>
+                `).join('');
+            })
+            .catch(function (error) {
+                console.error('Erreur lors du chargement des propriétés:', error);
+            });
+        }
+
+        // Soumettre le formulaire de réservation
+        document.getElementById('reservation-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const property = document.getElementById('property').value;
+            const checkin = document.getElementById('checkin').value;
+            const checkout = document.getElementById('checkout').value;
+
+            axios.post('http://127.0.0.1:8000/api/reservations/', {
+                property: property,
+                check_in: checkin,
+                check_out: checkout
+            }, {
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                Toastify({
+                    text: "Inscription réussie !",
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                }).showToast();
+                // Optionnel : rediriger l'utilisateur vers la page après l'annmation de la notification (2s)
+                setTimeout(() => {
+                    window.location.href = 'http://127.0.0.1:8000/profile/';
+                }, 2000);
+            })
+            .catch(function (error) {
+                document.getElementById('message').textContent = 'Erreur lors de la réservation.';
+                document.getElementById('message').style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -21,6 +21,7 @@ class Zone(models.Model):
 # properties/models.py
 
 class Property(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)  # Prix en EUR
@@ -32,10 +33,12 @@ class Property(models.Model):
         return self.title
 
     def price_in_fcfa(self):
-        return float(self.price) * 655.957  # Conversion EUR to FCFA
+        
+        return float(self.price) * 655.957
 
 
 class Reservation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     property = models.ForeignKey(Property, related_name='reservations', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='reservations', on_delete=models.CASCADE)
     date_reserved = models.DateTimeField(auto_now_add=True)
