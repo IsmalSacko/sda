@@ -1,0 +1,174 @@
+{% extends 'sdaSite/base.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/edit_property.css' %}">
+{% endblock %}
+
+{% block title %}Edit Property{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3>Edit Property</h3>
+    </div>
+    <div class="card-body">
+        <form id="edit-property-form">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price (EUR)</label>
+                <input type="number" step="0.01" id="price" name="price" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="zone" class="form-label">Zone</label>
+                <select id="zone" name="zone" class="form-select" required></select>
+            </div>
+            <div class="mb-3">
+                <label for="available" class="form-label">Available</label>
+                <input type="checkbox" id="available" name="available">
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Image</label>
+                <input type="file" id="image" name="image" class="form-control">
+                <div id="current-image-container" style="margin-top: 10px; text-align: center;">
+                    <label>Current Image:</label>
+                    <div>
+                        <img id="current-image" src="" alt="Current Property Image" style="max-width: 200px; max-height: 200px; border: 2px solid #ddd; border-radius: 5px;">
+                        <p id="current-image-name" style="margin-top: 5px;"></p>
+                    </div>
+                </div>
+                
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Récupérer le token CSRF
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const propertyId = window.location.pathname.split('/')[2];
+    const apiUrl = `/api/properties/${propertyId}/`;
+    const form = document.getElementById('edit-property-form');
+
+    function loadPropertyDetails() {
+        axios.get(apiUrl)
+            .then(response => {
+                const property = response.data;
+                document.getElementById('title').value = property.title;
+                document.getElementById('description').value = property.description;
+                document.getElementById('price').value = property.price;
+                document.getElementById('available').checked = property.available;
+
+                // Load zones and set the current zone
+                loadZones(property.zone);
+
+                // Affiche l'image actuelle
+                const currentImage = document.getElementById('current-image');
+                const currentImageName = document.getElementById('current-image-name');
+                if (property.image) {  // Assurez-vous que `property.image` contient l'URL de l'image
+                    currentImage.src = property.image;
+                    const imageName = property.image.split('/').pop(); // Récupère le nom de l'image à partir de l'URL
+                    currentImageName.textContent = imageName;
+                } else {
+                    document.getElementById('current-image-container').style.display = 'none';  // Cache le conteneur si aucune image n'existe
+                }
+            })
+            .catch(error => {
+                Toastify({
+                    text: "Error loading property details!",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    className: "error",
+                }).showToast();
+            });
+    }
+
+    function loadZones(currentZoneId) {
+        axios.get('/api/zones/')
+            .then(response => {
+                const zones = response.data;
+                const zoneSelect = document.getElementById('zone');
+                zones.forEach(zone => {
+                    const option = document.createElement('option');
+                    option.value = zone.id;
+                    option.textContent = `${zone.name} - ${zone.city_name}`;
+                    if (zone.id === currentZoneId) {
+                        option.selected = true;
+                    }
+                    zoneSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                Toastify({
+                    text: "Error loading zones!",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    className: "error",
+                }).showToast();
+            });
+    }
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form);
+
+        // Si l'utilisateur n'a pas sélectionné de nouvelle image, ne pas l'ajouter à formData
+        const imageInput = document.getElementById('image');
+        if (imageInput.files.length === 0) {
+            formData.delete('image');  // Supprime le champ image si aucune nouvelle image n'est sélectionnée
+        }
+
+        axios.put(apiUrl, formData, {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+            .then(response => {
+                Toastify({
+                    text: "Property updated successfully!",
+                    backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+                }).showToast();
+                setTimeout(() => {
+                    window.location.href = `/property/${propertyId}/details/`;
+                }, 2000);
+            })
+            .catch(error => {
+                Toastify({
+                    text: "Error updating property!",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    className: "error",
+                }).showToast();
+            });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+    const card = document.querySelector('.card');
+    card.classList.add('animate__rotateIn'); // Ajouter la classe d'animation
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    // Appliquer une couleur aléatoire de fond
+    body.style.backgroundColor = getRandomColor();
+});
+
+    document.addEventListener('DOMContentLoaded', loadPropertyDetails);
+</script>
+{% endblock %}

@@ -1,0 +1,114 @@
+<!-- property_list.html -->
+{% extends 'sdaSite/base.html' %}
+{% load static %}
+{% block title %}Property Listings{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/properties.css' %}">
+{% endblock %}
+{% block content %}
+<div class="containe">
+    <div class="header">
+        <h1>Propriétés Immobilières Disponibles</h1>
+    </div>
+
+
+    <div class="property-list" id="property-list">
+        <!-- Les biens immobiliers seront affichés ici -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    const apiEndpoint = '/api/properties/';
+const propertyList = document.getElementById('property-list');
+
+// Fonction pour vérifier le rôle de l'utilisateur
+function checkUserRole() {
+    return axios.get('/api/user-profile/')
+        .then(response => {
+            const role = response.data.role;
+            return role === 'superuser' || role === 'staff';
+        })
+        .catch(error => {
+            console.error('Erreur lors de la vérification du rôle de l\'utilisateur:', error);
+            return false; // En cas d'erreur, on considère que l'utilisateur n'a pas les droits d'administration
+        });
+}
+
+// Fonction pour charger les propriétés en fonction de la zone
+function loadProperties(zone = '') {
+    axios.get(apiEndpoint, {
+        params: { zone: zone }
+    })
+    .then(response => {
+        checkUserRole().then(isAdmin => {
+            if (isAdmin) {
+                displayPropertiesWithButtons(response.data);
+            } else {
+                displayPropertiesWithoutButtons(response.data);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Erreur lors de la récupération des propriétés:', error);
+    });
+}
+
+// Méthode pour afficher les propriétés avec les boutons d'action (Editer, Supprimer)
+function displayPropertiesWithButtons(properties) {
+    propertyList.innerHTML = '';
+    properties.forEach(property => {
+        const propertyItem = document.createElement('div');
+        propertyItem.classList.add('property-item');
+        propertyItem.innerHTML = `
+            <img src="${property.image ? property.image : 'https://via.placeholder.com/300x200'}" alt="${property.title}" class="property-image">
+            <div class="property-info">
+                <h3>${property.title}</h3>
+                <p class="description">${property.description}</p>
+                <p class="price">${property.price} EUR / ${parseFloat(property.price * 655.957).toFixed(0)} FCFA</p>
+                <p class="zone">${property.zone_name} - ${property.zone_city}</p>
+                <p class="availability">${property.available ? 'Disponible' : 'Non disponible'}</p>
+                <a href="/property/${property.id}/details/" class="btn btn-primary"><i class="fas fa-eye"></i> Détails</a>
+                <a href="/property/${property.id}/edit/" class="btn btn-secondary"><i class="fas fa-edit"></i> Éditer</a>
+                <a href="/property/${property.id}/delete/" class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</a>
+            </div>
+        `;
+        propertyList.appendChild(propertyItem);
+    });
+}
+
+// Méthode pour afficher les propriétés sans les boutons d'action
+function displayPropertiesWithoutButtons(properties) {
+    propertyList.innerHTML = '';
+    properties.forEach(property => {
+        const propertyItem = document.createElement('div');
+        propertyItem.classList.add('property-item');
+        propertyItem.innerHTML = `
+            <img src="${property.image ? property.image : 'https://via.placeholder.com/300x200'}" alt="${property.title}" class="property-image">
+            <div class="property-info">
+                <h3>${property.title}</h3>
+                <p class="description">${property.description}</p>
+                <p class="price">${property.price} EUR / ${parseFloat(property.price * 655.957).toFixed(0)} FCFA</p>
+                <p class="zone">${property.zone_name} - ${property.zone_city}</p>
+                <p class="availability">${property.available ? 'Disponible' : 'Non disponible'}</p>
+                <a href="/property/${property.id}/details/" class="btn btn-primary"><i class="fas fa-eye"></i> Détails</a>
+            </div>
+        `;
+        propertyList.appendChild(propertyItem);
+    });
+}
+
+// Charger les propriétés lors du chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+    loadProperties();
+});
+
+
+</script>
+{% endblock %}

@@ -70,7 +70,7 @@
                 }).showToast();
                 return;
             }
-            const registerUrl = "{% url 'inscription' %}";
+            const registerUrl = "{% url 'sdaSite:inscription' %}";
             // Envoyer les données au serveur
             axios.post('http://127.0.0.1:8000/registration/', {
                 username: username,

@@ -149,7 +149,7 @@
         });
 
         function loadReservation(id) {
-            axios.get(`http://127.0.0.1:8000/api/reservations/${id}/`)
+            axios.get(`/api/reservations/${id}/`)
                 .then(function(response) {
                     const reservation = response.data;
                     document.getElementById('property').value = reservation.property;
@@ -162,7 +162,7 @@
         }
 
         function loadProperties() {
-            axios.get('http://127.0.0.1:8000/api/properties/')
+            axios.get('/api/properties/')
                 .then(function(response) {
                     const properties = response.data;
                     const propertySelect = document.getElementById('property');
@@ -185,7 +185,7 @@
             const checkin = document.getElementById('checkin').value;
             const checkout = document.getElementById('checkout').value;
 
-            axios.patch(`http://127.0.0.1:8000/api/reservations/${reservationId}/`, 
+            axios.patch(`/api/reservations/${reservationId}/`, 
             {
                 property: property,
                 check_in: checkin,
@@ -201,7 +201,7 @@
                 showNotification('Réservation mise à jour !');
 
                 setTimeout(() => {
-                    window.location.href = `http://127.0.0.1:8000/reserved/${reservationId}/`;
+                    window.location.href = `/reserved/${reservationId}/`;
                 }, 2000);
             })
             .catch(function (error) {
@@ -221,6 +221,28 @@
                 notification.remove();
             }, 3000);
         }
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
+    
+    const pastelColors = [
+        '#FFB3BA', // Pastel Pink
+        '#FFDFBA', // Pastel Orange
+        '#FFFFBA', // Pastel Yellow
+        '#B9FBC0', // Pastel Green
+        '#C0E5F9', // Pastel Blue
+        '#D3B6C6'  // Pastel Purple
+    ];
+
+    function getRandomPastelColor() {
+        return pastelColors[Math.floor(Math.random() * pastelColors.length)];
+    }
+
+    // Appliquer une couleur pastel aléatoire de fond
+    body.style.backgroundColor = getRandomPastelColor();
+});
+
     </script>
 </body>
 </html>

@@ -1,0 +1,59 @@
+<!-- details.html -->
+{% extends 'sdaSite/base.html' %}
+{% load static %}
+{% block title %}Property Details{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/details.css' %}">
+{% endblock %}
+
+
+{% block content %}
+<div id="property-details" class="card">
+    <div class="card-header">
+        <h3 id="property-title"></h3>
+    </div>
+    <div class="card-body">
+        <img id="property-image" src="" alt="Property Image" class="img-fluid mb-3">
+        <p id="property-description"></p>
+        <p><strong>Price: </strong><span id="property-price"></span> EUR</p>
+        <p><strong>Zone: </strong><span id="property-zone"></span></p>
+        <p><strong>Availability: </strong><span id="property-availability"></span></p>
+    </div>
+    <div class="card-footer">
+        <a href="#" onclick="goBack()" class="btn btn-primary w-100"><i class="fas fa-arrow-left"></i> Go Back</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const propertyId = window.location.pathname.split('/')[2];
+    const apiUrl = `/api/properties/${propertyId}/`;
+
+    function loadPropertyDetails() {
+        axios.get(apiUrl)
+            .then(response => {
+                const property = response.data;
+                document.getElementById('property-title').textContent = property.title;
+                document.getElementById('property-description').textContent = property.description;
+                document.getElementById('property-price').textContent = property.price;
+                document.getElementById('property-zone').textContent = `${property.zone_name} - ${property.zone_city}`;
+                document.getElementById('property-availability').textContent = property.available ? 'Disponible' : 'Non disponible';
+                document.getElementById('property-image').src = property.image ? property.image : 'https://via.placeholder.com/300x200';
+            })
+            .catch(error => {
+                Toastify({
+                    text: "Error loading property details!",
+                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
+                    className: "error",
+                }).showToast();
+            });
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadPropertyDetails);
+</script>
+{% endblock %}

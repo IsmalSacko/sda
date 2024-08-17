@@ -70,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+     'sdaSite.middleware.AuthenticationMiddleware',
 
 ]
 
@@ -163,5 +164,6 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-LOGIN_REDIRECT_URL = 'accounts/login/'
 CORS_ALLOW_ALL_ORIGINS = True
+LOGIN_URL = 'sdaSite:connexion'
+LOGOUT_REDIRECT_URL = 'sdaSite:home'  # Ou n'importe quelle page d'accueil

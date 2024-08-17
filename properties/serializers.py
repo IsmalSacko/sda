@@ -12,6 +12,7 @@ class CitySerializer(serializers.ModelSerializer):
  # Sérialisation des zones  avec la ville associée       
 class ZoneSerializer(serializers.ModelSerializer):
     city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
+    city_name = serializers.CharField(source='city.name', read_only=True)
 
     class Meta:
         model = Zone
@@ -24,20 +25,16 @@ class ZoneSerializer(serializers.ModelSerializer):
 class PropertySerializer(serializers.ModelSerializer):
     zone = serializers.PrimaryKeyRelatedField(queryset=Zone.objects.all())
     zone_name = serializers.CharField(source='zone.name', read_only=True)
+    zone_city = serializers.CharField(source='zone.city.name', read_only=True)
     
     price_in_fcfa = serializers.SerializerMethodField()
 
     class Meta:
         model = Property
-        fields = ['id', 'title', 'description', 'price', 'price_in_fcfa', 'zone','zone_name', 'available', 'image']
+        fields = ['id', 'title', 'description', 'price', 'price_in_fcfa', 'zone_city','zone','zone_name', 'available', 'image']
 
     def get_price_in_fcfa(self, obj):
         return obj.price_in_fcfa()
-
-   
-
-
-
        
 
 
@@ -68,6 +65,7 @@ class ReservationSerializer(serializers.ModelSerializer):
                   ]
 
     def create(self, validated_data):
+        
         # Associe automatiquement la réservation à l'utilisateur connecté
         user = self.context['request'].user
         reservation = Reservation.objects.create(user=user, **validated_data)

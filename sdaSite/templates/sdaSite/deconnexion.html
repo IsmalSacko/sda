@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déconnexion</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome (pour les icônes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            overflow: hidden;
+        }
+        .card {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
+            border: none;
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card text-center">
+        <div class="card-body">
+            <h5 class="card-title">Déconnexion</h5>
+            <p class="card-text">Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            <form id="logout-form" method="post" action="{% url 'sdaSite:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                </button>
+            </form>
+            <a href="/" class="btn btn-link">Retour à la page d'accueil</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS et dépendances (Popper.js et jQuery) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Toastify JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.12.0/toastify.min.js"></script>
+
+    <script>
+        // Gestion du formulaire de déconnexion
+        document.getElementById('logout-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Empêche le comportement par défaut du formulaire
+
+            Toastify({
+                text: "Êtes-vous sûr de vouloir vous déconnecter ?",
+                duration: 5000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+                onClick: function() {
+                    // Soumettre le formulaire si l'utilisateur confirme
+                    document.getElementById('logout-form').submit();
+                }
+            }).showToast();
+        });
+    </script>
+</body>
+</html>
