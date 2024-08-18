@@ -297,7 +297,7 @@
                     return;
                 }
 
-                axios.post('http://127.0.0.1:8000/accounts/password/change/', {
+                axios.post('/accounts/password/change/', {
                     new_password1: newPassword,
                     new_password2: confirmNewPassword
                 }, { headers: { 'X-CSRFToken': csrfToken } })
@@ -318,7 +318,7 @@
 
             // Mot de passe oublié
             document.getElementById('forgot-password-btn').addEventListener('click', () => {
-                axios.post('http://127.0.0.1:8000/accounts/password/reset/', {
+                axios.post('/accounts/password/reset/', {
                     email: document.getElementById('forgot_email').value
                 }, { headers: { 'X-CSRFToken': csrfToken } })
                     .then(response => {
@@ -339,7 +339,7 @@
            
         });
         document.addEventListener('DOMContentLoaded', () => {
-    const apiUrl = 'http://127.0.0.1:8000/api/reservations/';
+    const apiUrl = '/api/reservations/';
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Charger les réservations de l'utilisateur
