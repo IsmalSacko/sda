@@ -1,0 +1,36 @@
+    #property-details {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        background-color: #fff;
+        animation: fadeIn 1s ease-in;
+    }
+    #property-details .card-header, #property-details .card-footer {
+        background-color: #e67e22;
+        color: #fff;
+        border-radius: 8px 8px 0 0;
+        text-align: center;
+        padding: 10px;
+    }
+    #property-details .card-footer {
+        border-radius: 0 0 8px 8px;
+    }
+    #property-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        transition: transform 0.3s ease;
+    }
+    #property-image:hover {
+        transform: scale(1.05);
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
