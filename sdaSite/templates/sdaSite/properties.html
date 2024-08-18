@@ -74,10 +74,12 @@ function displayPropertiesWithButtons(properties) {
                 <p class="price">${property.price} EUR / ${parseFloat(property.price * 655.957).toFixed(0)} FCFA</p>
                 <p class="zone">${property.zone_name} - ${property.zone_city}</p>
                 <p class="availability">${property.available ? 'Disponible' : 'Non disponible'}</p>
-                <a href="/property/${property.id}/details/" class="btn btn-primary"><i class="fas fa-eye"></i> Détails</a>
-                <a href="/property/${property.id}/edit/" class="btn btn-secondary"><i class="fas fa-edit"></i> Éditer</a>
-                <a href="/property/${property.id}/delete/" class="btn btn-danger"><i class="fas fa-trash"></i> Supprimer</a>
-            </div>
+                <div class="actions col d-flex justify-content-around">
+                    <a href="/property/${property.id}/details/" class="btn btn-primary"><i class="fas fa-eye"></i> Details</a>
+                    <a href="/property/${property.id}/edit/" class="btn btn-secondary"><i class="fas fa-edit"></i> Edit</a>
+                    <a href="/property/${property.id}/delete/" class="btn btn-danger"><i class="fas fa-trash"></i> Delete</a>
+                </div>
+             </div>
         `;
         propertyList.appendChild(propertyItem);
     });
@@ -97,7 +99,7 @@ function displayPropertiesWithoutButtons(properties) {
                 <p class="price">${property.price} EUR / ${parseFloat(property.price * 655.957).toFixed(0)} FCFA</p>
                 <p class="zone">${property.zone_name} - ${property.zone_city}</p>
                 <p class="availability">${property.available ? 'Disponible' : 'Non disponible'}</p>
-                <a href="/property/${property.id}/details/" class="btn btn-primary"><i class="fas fa-eye"></i> Détails</a>
+                <a href="/property/${property.id}/details/" class="btn btn-primary w-100"><i class="fas fa-eye"></i> Détails</a>
             </div>
         `;
         propertyList.appendChild(propertyItem);
