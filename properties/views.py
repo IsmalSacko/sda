@@ -71,7 +71,7 @@ class UserProfileView(APIView):
             login_url = reverse('connexion')  # Assurez-vous d'avoir la vue 'login' configurée
             next_url = request.build_absolute_uri()  # URL actuelle
             return HttpResponseRedirect(f'{login_url}?next={next_url}')
-
+        
         user = request.user
         role = 'superuser' if user.is_superuser else 'staff' if user.is_staff else 'user'
         group = user.groups.first()
@@ -82,5 +82,6 @@ class UserProfileView(APIView):
             "group": group.name if group else None,
             'token': str(user.auth_token),
         })
+    
 
 

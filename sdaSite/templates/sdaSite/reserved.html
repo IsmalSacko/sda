@@ -201,7 +201,8 @@
                 showNotification('Réservation mise à jour !');
 
                 setTimeout(() => {
-                    window.location.href = `/reserved/${reservationId}/`;
+                    //window.location.href = `/reserved/${reservationId}/`;
+                    window.location.href = '/profile/';
                 }, 2000);
             })
             .catch(function (error) {

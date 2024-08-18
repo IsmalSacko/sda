@@ -40,6 +40,35 @@
             from { left: 100%; }
             to { left: -100%; }
         }
+
+
+                .user-menu {
+            position: relative;
+        }
+        .user-menu-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            z-index: 1000;
+        }
+        .user-menu-content a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .user-menu-content a:hover {
+            background-color: #f8f9fa;
+        }
+        .user-menu:hover .user-menu-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +81,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
@@ -71,20 +100,23 @@
                         <a class="nav-link" href="#">Contact</a>
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sdaSite:profile' %}">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sdaSite:logout' %}">Logout</a>
+                    <li class="nav-item dropdown user-menu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i> <span id="user-name"> {{ user.username }}</span>
+                        </a>
+                        <div class="dropdown-menu user-menu-content" aria-labelledby="userMenu">
+                            <a class="dropdown-item" href="{% url 'sdaSite:profile' %}" id="profile-link">Profil</a>
+                            <a class="dropdown-item" href="{% url 'sdaSite:logout' %}" id="auth-action">Déconnexion</a>
+                        </div>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sdaSite:connexion' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'sdaSite:inscription' %}">Register</a>
+                        <a class="nav-link" href="{% url 'sdaSite:connexion' %}">Connexion</a>
                     </li>
                     {% endif %}
+
+
+
                 </ul>
             </div>
         </div>
@@ -116,23 +148,6 @@
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 
-//
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     const body = document.body;
-    
-//     function getRandomColor() {
-//         const letters = '0123456789ABCDEF';
-//         let color = '#';
-//         for (let i = 0; i < 6; i++) {
-//             color += letters[Math.floor(Math.random() * 16)];
-//         }
-//         return color;
-//     }
-
-//     // Appliquer une couleur aléatoire de fond
-//     body.style.backgroundColor = getRandomColor();    
-// });
 
  </script>
 </body>
