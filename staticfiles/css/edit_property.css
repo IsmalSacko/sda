@@ -1,0 +1,81 @@
+/* edit_property.css */
+
+/* Style de la carte */
+.card {
+    max-width: 500px; /* Réduit la taille de la carte */
+    margin: 20px auto;
+    border-radius: 12px; /* Coins arrondis */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Ombre renforcée */
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Fond en dégradé */
+    opacity: 0; /* Caché initialement */
+    transform: scale(0.95) translateY(-30px) rotate(-5deg); /* Transformation initiale */
+    transition: transform 1s ease-out, opacity 1s ease-out; /* Transition en douceur */
+}
+
+/* Carte animée */
+.card.animate__animated {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotate(0);
+}
+
+/* Header de la carte */
+.card-header {
+    background-color: rgba(255, 255, 255, 0.9); /* Blanc semi-transparent */
+    color: #333;
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Corps de la carte */
+.card-body {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Bouton primaire */
+.btn-primary {
+    background-color: #ff7e5f;
+    border-color: #ff7e5f;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #feb47b;
+    border-color: #feb47b;
+    transform: scale(1.05); /* Agrandissement léger au survol */
+}
+
+/* Animation d'apparition de la carte */
+@keyframes animateCard {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-30px) rotate(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0) rotate(0);
+    }
+}
+
+/* Applique l'animation lorsque la carte reçoit la classe */
+.card.animate__rotateIn {
+    animation: animateCard 1s ease-out forwards;
+}
+
+/* Animation pour le corps du formulaire */
+.animate__fadeIn {
+    animation-name: fadeIn;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

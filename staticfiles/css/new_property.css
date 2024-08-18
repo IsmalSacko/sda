@@ -1,0 +1,60 @@
+/* new.css */
+
+/* Card styling */
+.card {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Gradient background */
+    opacity: 0; /* Start with hidden opacity */
+    transform: translateY(-50px) rotate(-10deg); /* Start slightly off-screen and rotated */
+    transition: opacity 1s ease-in-out, transform 1s ease-in-out; /* Smooth transition */
+}
+
+/* Card header styling */
+.card-header {
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+    color: #333;
+    padding: 1rem;
+    border-radius: 12px 12px 0 0;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Card body styling */
+.card-body {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #ff7e5f;
+    border-color: #ff7e5f;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #feb47b;
+    border-color: #feb47b;
+    transform: scale(1.05); /* Slight scale on hover */
+}
+
+/* Animation for the card landing effect */
+.animate__landing {
+    animation: landing 1s ease-in-out forwards;
+}
+
+@keyframes landing {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px) rotate(-10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+}
