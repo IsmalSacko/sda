@@ -101,9 +101,13 @@ WSGI_APPLICATION = 'sad.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / config('DATABASENAME'),
-}
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DATABASENAME'),  # Nom de la base de données MySQL
+        'USER': config('DATABASEUSER'),  # Nom d'utilisateur MySQL
+        'PASSWORD': config('DATABASEPASSWORD'),  # Mot de passe MySQL
+        'HOST': 'localhost',  # Adresse de l'hôte, généralement localhost
+        'PORT': '3306',  # Port MySQL, par défaut 3306
+    }
 }
 
 
