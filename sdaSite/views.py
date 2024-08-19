@@ -1,5 +1,9 @@
 from django.contrib.auth import logout
-from django.shortcuts import redirect, render
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -44,3 +48,39 @@ def edit_property(request, id):
 def delete_property(request, id):
     return render(request, 'sdaSite/delete.html', {'id': id})
 
+
+def apropos(request):
+    return render(request, 'sdaSite/apropos.html')
+
+
+
+def contact(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+
+        subject = 'Nouveau message de contact'
+        body = f"Nom: {name}\nEmail: {email}\n\nMessage:\n{message}"
+        
+        # Liste des destinataires
+        recipients = ['mamadoumsacko365@icloud.com', 'ismalsacko@yahoo.fr']
+
+        try:
+            email = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=settings.EMAIL_HOST_USER,
+                headers={'Reply-To': email}, # Ajouter l'adresse e-mail du répondant
+                to=recipients
+            )
+            email.send()
+            return redirect('sdaSite:contact_success') # Redirige vers la page de succès après l'envoi du message
+        except Exception as e:
+            return HttpResponse(f"Une erreur est survenue : {e}")
+        
+    return render(request, 'sdaSite/contact.html')
+
+
+def contact_success(request):
+    return render(request, 'sdaSite/contact_success.html')

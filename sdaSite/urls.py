@@ -20,4 +20,8 @@ urlpatterns = [
     path('property/new/', new_property, name='new_property'),
     path('property/<int:id>/edit/', edit_property, name='edit_property'),
     path('property/<int:id>/delete/', delete_property, name='delete_property'),
+
+    path('apropos/', apropos, name='apropos'),
+    path('contact/', contact, name='contact'),
+    path('contact/success/', contact_success, name='contact_success'),
 ]

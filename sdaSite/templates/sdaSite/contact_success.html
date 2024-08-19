@@ -1,0 +1,16 @@
+{% extends "sdaSite/base.html" %}
+{% load static %}
+
+
+{% block title %}Message envoyé{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/contact.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="success-message">
+    <h1>Merci pour votre message !</h1>
+    <p>Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.</p>
+</div>
+{% endblock content %}

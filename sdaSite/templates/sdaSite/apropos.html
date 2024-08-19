@@ -1,0 +1,41 @@
+{% extends "sdaSite/base.html" %}
+{% load static %}
+{% block title %}À propos de SDA{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static '/css/apropos.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="about-section">
+    <div class="container">
+        <h1 class="fadeInDown">À propos de SDA (Sakola Digitale Agence)</h1>
+        <p class="fadeInUp">
+            Bienvenue sur SDA (Sakola Digitale Agence), la plateforme digitale de référence pour l'immobilier à Bamako et ses environs. 
+            Notre mission est de simplifier la recherche de logements pour les résidents et les nouveaux arrivants en offrant un accès 
+            centralisé et complet à tous les appartements disponibles dans la région.
+        </p>
+        <p class="fadeInUp delay-1s">
+            Implantée au cœur de Bamako, SDA s'engage à être le lien de confiance entre les clients et les agences immobilières locales. 
+            Nous travaillons en étroite collaboration avec ces agences pour vous offrir une large sélection de biens, répondant à tous les 
+            besoins et budgets.
+        </p>
+        <p class="fadeInUp delay-2s">
+            Notre plateforme intuitive et conviviale permet aux utilisateurs de naviguer facilement parmi les différentes offres d'appartements, 
+            d'effectuer des recherches précises selon des critères spécifiques, et de découvrir les meilleures options disponibles sur le marché. 
+            Que vous soyez à la recherche d'un appartement pour louer ou acheter, SDA vous accompagne dans chaque étape de votre démarche.
+        </p>
+        <p class="fadeInUp delay-3s">
+            Avec Sakola Digitale Agence, trouver un logement à Bamako n'a jamais été aussi simple. Faites confiance à notre expertise locale 
+            et à notre engagement pour vous offrir une expérience immobilière fluide et sans tracas.
+        </p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Any JavaScript animations or interactivity can be added here
+        console.log("Page loaded and animations triggered.");
+    });
+</script>
+{% endblock content %}
