@@ -1,0 +1,64 @@
+.about-section {
+    background-color: #f9f9f9;
+    padding: 60px 0;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.about-section h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+.about-section p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.fadeInUp {
+    opacity: 0;
+    animation: fadeInUp 1s forwards;
+}
+
+.fadeInUp.delay-1s {
+    animation-delay: 1s;
+}
+
+.fadeInUp.delay-2s {
+    animation-delay: 2s;
+}
+
+.fadeInUp.delay-3s {
+    animation-delay: 3s;
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}

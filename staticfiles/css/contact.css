@@ -1,0 +1,141 @@
+.contact-section {
+    background-color: #ffffff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.contact-section h1 {
+    font-size: 36px;
+    color: #333;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease-in-out;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Ombre du texte */
+}
+
+.contact-section p {
+    font-size: 16px; /* Réduit la taille du texte pour plus de concision */
+    color: #666;
+    margin-bottom: 40px;
+    line-height: 1.6;
+    animation: fadeInUp 1s ease-in-out;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Ombre du texte */
+}
+
+.contact-details {
+    display: flex;
+    flex-wrap: wrap; /* Permet aux éléments de s'ajuster en fonction de l'écran */
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 40px; /* Espace supplémentaire avant le formulaire */
+}
+
+.contact-item {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre de la boîte */
+    transition: box-shadow 0.3s ease;
+    max-width: 300px; /* Limite la largeur pour une meilleure présentation */
+}
+
+.contact-item:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Ombre de boîte plus prononcée au survol */
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.contact-icon {
+    width: 50px;
+    height: 50px;
+    transition: transform 0.3s ease;
+}
+
+.rotate .contact-icon:hover {
+    transform: rotate(360deg);
+}
+
+.arrow-down {
+    margin-top: 50px;
+    animation: bounce 2s infinite;
+}
+
+.arrow-down img {
+    width: 40px;
+    height: 40px;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-15px);
+    }
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+.contact-form {
+    max-width: 600px;
+    margin: 40px auto;
+    text-align: left;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre de la boîte */
+    background-color: #f9f9f9; /* Couleur de fond pour le formulaire */
+}
+
+.contact-form .form-group {
+    margin-bottom: 20px;
+}
+
+.contact-form .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.contact-form .form-group input,
+.contact-form .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre interne des champs */
+}
+
+.contact-form .submit-btn {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.contact-form .submit-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-details {
+        flex-direction: column; /* Empile les éléments verticalement sur les écrans plus petits */
+        align-items: center;
+    }
+
+    .contact-item {
+        max-width: 100%; /* Permet aux éléments de prendre toute la largeur disponible */
+    }
+
+    .contact-form {
+        width: 90%; /* Réduit la largeur du formulaire sur les écrans plus petits */
+    }
+}
